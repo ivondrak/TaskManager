@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Admin",
+            "request": "launch",
+            "mainClass": "AdminApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
+        }
+    ]
+}
