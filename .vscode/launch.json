@@ -9,6 +9,24 @@
             "classpath": [
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
+        },
+        {
+            "type": "java",
+            "name": "Launch Manager",
+            "request": "launch",
+            "mainClass": "ManagerApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Launch User",
+            "request": "launch",
+            "mainClass": "UserApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
         }
     ]
 }
