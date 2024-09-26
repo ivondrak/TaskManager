@@ -1,11 +1,21 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "java",
             "name": "Launch Admin Window",
             "request": "launch",
             "mainClass": "AdminGUIApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Launch Manager Window",
+            "request": "launch",
+            "mainClass": "ManagerGUIApp",
             "classpath": [
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
