@@ -8,9 +8,12 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class AdminGUIApp extends JFrame {
-    private final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
-    private final String DB_USER = "root";
-    private final String DB_PASSWORD = "MajSQL-0293";
+    //private final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
+    private final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
+    //private final String DB_USER = "root";
+    private final String DB_USER = "guest";
+    //private final String DB_PASSWORD = "MajSQL-0293";
+    private final String DB_PASSWORD = "guest_password";
 
     private JTable usersTable;
     private DefaultTableModel tableModel;
