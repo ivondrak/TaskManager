@@ -3,6 +3,24 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Admin Window",
+            "request": "launch",
+            "mainClass": "AdminGUIApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
+        },
+        {
+            "type": "java",
+            "name": "Launch User Window",
+            "request": "launch",
+            "mainClass": "UserGUIApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
+        },
+        {
+            "type": "java",
             "name": "Launch Admin",
             "request": "launch",
             "mainClass": "AdminApp",
