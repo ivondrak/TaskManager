@@ -13,6 +13,15 @@
         },
         {
             "type": "java",
+            "name": "Launch Personal Window",
+            "request": "launch",
+            "mainClass": "PersonalGUIApp",
+            "classpath": [
+                "lib/mysql-connector-j-9.0.0.jar"
+            ]
+        },
+        {
+            "type": "java",
             "name": "Launch Manager Window",
             "request": "launch",
             "mainClass": "ManagerGUIApp",

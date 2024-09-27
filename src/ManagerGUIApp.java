@@ -37,9 +37,10 @@ public class ManagerGUIApp extends JFrame {
             public void valueChanged(ListSelectionEvent e) {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
-                String title = (String) tableModel.getValueAt(selectedRow, 0);
-                String due_date = (String) tableModel.getValueAt(selectedRow, 1).toString();
-                String email = (String) tableModel.getValueAt(selectedRow, 3);
+                int id = (int) tableModel.getValueAt(selectedRow, 0);
+                String title = (String) tableModel.getValueAt(selectedRow, 1);
+                String due_date = (String) tableModel.getValueAt(selectedRow, 2).toString();
+                String email = (String) tableModel.getValueAt(selectedRow, 4);
                 titleField.setText(title);
                 dueDateField.setText(due_date);
                 emailComboBox.setSelectedItem(email);
@@ -118,11 +119,11 @@ public class ManagerGUIApp extends JFrame {
     private void loadTasks() {
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email")) {
+                ResultSet rs = stmt.executeQuery("SELECT tasks.id, tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email")) {
 
             while (rs.next()) {
                 String status = rs.getInt("status") == 0 ? "Pending" : "Completed";
-                tableModel.addRow(new Object[]{rs.getString("title"), rs.getDate("due_date"), status, rs.getString("email")});
+                tableModel.addRow(new Object[]{rs.getInt("id"), rs.getString("title"), rs.getDate("due_date"), status, rs.getString("email")});
             }
             rs.close();
             stmt.close();
@@ -154,18 +155,10 @@ public class ManagerGUIApp extends JFrame {
     private void deleteTask() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
-            String title = (String) tableModel.getValueAt(selectedRow, 0);
-            Date dueDate = (Date) tableModel.getValueAt(selectedRow, 1);
-            int status = "Pending".equals(tableModel.getValueAt(selectedRow, 2)) ? 0 : 1;
-            String email = (String) tableModel.getValueAt(selectedRow, 3);
-
-            try (PreparedStatement pstmt = connection.prepareStatement("DELETE FROM tasks WHERE title = ? AND due_date = ? AND status = ? AND user_email = ?")) {
-                pstmt.setString(1, title);
-                pstmt.setDate(2, dueDate);
-                pstmt.setInt(3, status);
-                pstmt.setString(4, email);
+            int id = (int) tableModel.getValueAt(selectedRow, 0);
+            try (PreparedStatement pstmt = connection.prepareStatement("DELETE FROM tasks WHERE id = ?")) {
+                pstmt.setInt(1, id);
                 pstmt.executeUpdate();
-
                 loadTasks();
                 pstmt.close();
             } catch (SQLException e) {
@@ -178,21 +171,17 @@ public class ManagerGUIApp extends JFrame {
         
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
-            String title = (String) tableModel.getValueAt(selectedRow, 0);
-            Date dueDate = (Date) tableModel.getValueAt(selectedRow, 1);
-            String email = (String) tableModel.getValueAt(selectedRow, 3);
+            int id = (int) tableModel.getValueAt(selectedRow, 0);
 
             String newTitle = titleField.getText();
             Date newDueDate = Date.valueOf(dueDateField.getText());
             String newEmail = emailComboBox.getItemAt(emailComboBox.getSelectedIndex());
 
-            try (PreparedStatement pstmt = connection.prepareStatement("UPDATE tasks SET title = ?, due_date = ?, user_email = ? WHERE title = ? AND due_date = ? AND user_email = ?")) {
+            try (PreparedStatement pstmt = connection.prepareStatement("UPDATE tasks SET title = ?, due_date = ?, user_email = ? WHERE id = ?")) {
                 pstmt.setString(1, newTitle);
                 pstmt.setDate(2, newDueDate);
                 pstmt.setString(3, newEmail);
-                pstmt.setString(4, title);
-                pstmt.setDate(5, dueDate);
-                pstmt.setString(6, email);
+                pstmt.setInt(4, id);
                 pstmt.executeUpdate();
 
                 loadTasks();
