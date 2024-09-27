@@ -7,13 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class AdminGUIApp extends JFrame {
-    //private final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
-    private final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
-    //private final String DB_USER = "root";
-    private final String DB_USER = "guest";
-    //private final String DB_PASSWORD = "MajSQL-0293";
-    private final String DB_PASSWORD = "guest_password";
+public class AdminGUIApp extends GenericGUIApp {
 
     private JTable usersTable;
     private DefaultTableModel tableModel;
@@ -21,15 +15,14 @@ public class AdminGUIApp extends JFrame {
     private JTextField emailField;
     private JButton addUserButton;
     private JButton removeUserButton;
-    private Connection connection;
 
-    public AdminGUIApp() {
-        
-        setTitle("Admin");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public AdminGUIApp(String title) {
+        super(title);
+    }
+
+    @Override
+    protected void initializeUI() {
         setLayout(new BorderLayout());
-
         tableModel = new DefaultTableModel(new String[]{"Name", "Email"}, 0);
         usersTable = new JTable(tableModel);
 
@@ -89,13 +82,6 @@ public class AdminGUIApp extends JFrame {
         add(new JScrollPane(usersTable), BorderLayout.CENTER);
         add(panel, BorderLayout.SOUTH);
 
-        // Establish database connection
-        try {
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            loadUsers();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     private void loadUsers() {
@@ -137,23 +123,11 @@ public class AdminGUIApp extends JFrame {
         }
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new AdminGUIApp().setVisible(true);
+                new AdminGUIApp("User Administration").setVisible(true);
             }
         });
     }

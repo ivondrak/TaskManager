@@ -6,40 +6,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class PersonalGUIApp extends JFrame {
-    //private final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
-    private final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
-    //private final String DB_USER = "root";
-    private final String DB_USER = "guest";
-    //private final String DB_PASSWORD = "MajSQL-0293";
-    private final String DB_PASSWORD = "guest_password";
+public class PersonalGUIApp extends GenericGUIApp {
 
     private JTextField emailField;
     private JTable tasksTable;
     private DefaultTableModel tableModel;
-    private Connection connection;
 
-    public PersonalGUIApp() {
-        setTitle("Personal Task Manager");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-
-        initializeDatabaseConnection();
-        initializeUI();
+    public PersonalGUIApp(String title) {
+        super(title);
     }
 
-    private void initializeDatabaseConnection() {
-        try {
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Database connection failed", "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-    }
-
-    private void initializeUI() {
+    @Override
+    protected void initializeUI() {
         JPanel panel = new JPanel(new BorderLayout());
         emailField = new JTextField(20);
         JButton submitButton = new JButton("Submit");
@@ -150,23 +128,11 @@ public class PersonalGUIApp extends JFrame {
         }
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new PersonalGUIApp().setVisible(true);
+                new PersonalGUIApp("Personal Task Manager").setVisible(true);
             }
         });
     }

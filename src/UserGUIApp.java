@@ -5,26 +5,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class UserGUIApp extends JFrame {
-    //private final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
-    private final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
-    //private final String DB_USER = "root";
-    private final String DB_USER = "guest";
-    //private final String DB_PASSWORD = "MajSQL-0293";
-    private final String DB_PASSWORD = "guest_password";
-
+public class UserGUIApp extends GenericGUIApp {
 
     private JComboBox<String> emailComboBox;
     private JTable tasksTable;
     private DefaultTableModel tableModel;
     private JButton toggleStatusButton;
-    private Connection connection;
 
-    public UserGUIApp() {
-        // Initialize the GUI components
-        setTitle("Task Manager");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public UserGUIApp(String title) {
+        super(title);
+    }
+
+    @Override
+    protected void initializeUI() {
         setLayout(new BorderLayout());
 
         emailComboBox = new JComboBox<>();
@@ -49,14 +42,7 @@ public class UserGUIApp extends JFrame {
         add(emailComboBox, BorderLayout.NORTH);
         add(new JScrollPane(tasksTable), BorderLayout.CENTER);
         add(toggleStatusButton, BorderLayout.SOUTH);
-
-        // Establish database connection
-        try {
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            loadEmails();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        loadEmails();     
     }
 
     private void loadEmails() {
@@ -120,23 +106,11 @@ public class UserGUIApp extends JFrame {
         }
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new UserGUIApp().setVisible(true);
+                new UserGUIApp("Assigments Overview").setVisible(true);
             }
         });
     }

@@ -7,26 +7,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class ManagerGUIApp extends JFrame {
-    //private final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
-    private final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
-    //private final String DB_USER = "root";
-    private final String DB_USER = "guest";
-    //private final String DB_PASSWORD = "MajSQL-0293";
-    private final String DB_PASSWORD = "guest_password";
+public class ManagerGUIApp extends GenericGUIApp {
 
-    private Connection connection;
     private JComboBox<String> emailComboBox;
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField titleField, dueDateField;
     private JButton addButton, deleteButton, updateButton;
 
-    public ManagerGUIApp() {
-        
-        setTitle("Task Manager");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public ManagerGUIApp(String title) {
+        super(title);
+    }
+
+    @Override
+    protected void initializeUI() {
         setLayout(new BorderLayout());
 
         tableModel = new DefaultTableModel(new String[]{"ID", "Title", "Due Date", "Status", "User Email"}, 0);
@@ -35,16 +29,15 @@ public class ManagerGUIApp extends JFrame {
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow != -1) {
-                int id = (int) tableModel.getValueAt(selectedRow, 0);
-                String title = (String) tableModel.getValueAt(selectedRow, 1);
-                String due_date = (String) tableModel.getValueAt(selectedRow, 2).toString();
-                String email = (String) tableModel.getValueAt(selectedRow, 4);
-                titleField.setText(title);
-                dueDateField.setText(due_date);
-                emailComboBox.setSelectedItem(email);
-            }
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    String title = (String) tableModel.getValueAt(selectedRow, 1);
+                    String due_date = (String) tableModel.getValueAt(selectedRow, 2).toString();
+                    String email = (String) tableModel.getValueAt(selectedRow, 4);
+                    titleField.setText(title);
+                    dueDateField.setText(due_date);
+                    emailComboBox.setSelectedItem(email);
+                }
             }
         });
 
@@ -92,18 +85,10 @@ public class ManagerGUIApp extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 updateTask();
             }
-        });
+        }); 
 
-        // Establish database connection
-        try {
-            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT email FROM users")) {
-
+        try (Statement stmt = connection.createStatement(); 
+                ResultSet rs = stmt.executeQuery("SELECT email FROM users")) {
             while (rs.next()) {
                 emailComboBox.addItem(rs.getString("email"));
             }
@@ -112,7 +97,6 @@ public class ManagerGUIApp extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         loadTasks();
     }
 
@@ -192,23 +176,11 @@ public class ManagerGUIApp extends JFrame {
         }
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new ManagerGUIApp().setVisible(true);
+                new ManagerGUIApp("Task Manager").setVisible(true);
             }
         });
     }
