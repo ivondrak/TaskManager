@@ -1,0 +1,4 @@
+Main-Class: AdminGUIApp
+// Main-Class: ManagerGUIApp
+// Main-Class: UserGUIApp
+// Main-Class: PersonalGUIApp
