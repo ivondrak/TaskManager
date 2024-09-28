@@ -86,7 +86,10 @@ public class UserGUIApp extends GenericGUIApp {
 
     private void toggleTaskStatus() {
         int selectedRow = tasksTable.getSelectedRow();
-        if (selectedRow == -1) return;
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(UserGUIApp.this, "Select a task to update!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        };
 
         int taskId = (int) tableModel.getValueAt(selectedRow, 0);
         String currentStatus = (String) tableModel.getValueAt(selectedRow, 3);

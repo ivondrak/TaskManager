@@ -26,6 +26,10 @@ public class PersonalGUIApp extends GenericGUIApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String email = emailField.getText();
+                if (!isValidEmail(email)) {
+                    JOptionPane.showMessageDialog(PersonalGUIApp.this, "Invalid email address!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (isEmailRegistered(email)) {
                     loadTasks();
                 } else {
@@ -53,6 +57,9 @@ public class PersonalGUIApp extends GenericGUIApp {
                 if (selectedRow != -1) {
                     toggleTaskStatus();
                     loadTasks();
+                }
+                else {
+                    JOptionPane.showMessageDialog(PersonalGUIApp.this, "Select a task to update!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -84,6 +91,7 @@ public class PersonalGUIApp extends GenericGUIApp {
 
     private void loadTasks() {
         String selectedEmail = emailField.getText();
+
         tableModel.setRowCount(0); // Clear existing rows
 
         try (PreparedStatement stmt = connection.prepareStatement("SELECT id, title, due_date, status FROM tasks WHERE user_email = ?")) {
@@ -108,7 +116,10 @@ public class PersonalGUIApp extends GenericGUIApp {
 
     private void toggleTaskStatus() {
         int selectedRow = tasksTable.getSelectedRow();
-        if (selectedRow == -1) return;
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(PersonalGUIApp.this, "Select a task to update!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        };
 
         int taskId = (int) tableModel.getValueAt(selectedRow, 0);
         String currentStatus = (String) tableModel.getValueAt(selectedRow, 3);
@@ -126,6 +137,11 @@ public class PersonalGUIApp extends GenericGUIApp {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
     }
 
     public static void main(String[] args) {

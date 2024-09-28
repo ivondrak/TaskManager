@@ -29,13 +29,13 @@ public class AdminGUIApp extends GenericGUIApp {
         usersTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-            int selectedRow = usersTable.getSelectedRow();
-            if (selectedRow != -1) {
-                String name = (String) tableModel.getValueAt(selectedRow, 0);
-                String email = (String) tableModel.getValueAt(selectedRow, 1);
-                nameField.setText(name);
-                emailField.setText(email);
-            }
+                int selectedRow = usersTable.getSelectedRow();
+                if (selectedRow != -1) {
+                    String name = (String) tableModel.getValueAt(selectedRow, 0);
+                    String email = (String) tableModel.getValueAt(selectedRow, 1);
+                    nameField.setText(name);
+                    emailField.setText(email);
+                }
             }
         });
 
@@ -49,6 +49,10 @@ public class AdminGUIApp extends GenericGUIApp {
             public void actionPerformed(ActionEvent e) {
                 String name = nameField.getText();
                 String email = emailField.getText();
+                if (!isValidEmail(email)) {
+                    JOptionPane.showMessageDialog(AdminGUIApp.this, "Invalid email address!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (!name.isEmpty() && !email.isEmpty()) {
                     addUser(name, email);
                     loadUsers();
@@ -66,6 +70,9 @@ public class AdminGUIApp extends GenericGUIApp {
                     removeUser(email);
                     loadUsers();
                 }
+                else {
+                    JOptionPane.showMessageDialog(AdminGUIApp.this, "Select a user to remove!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
@@ -81,6 +88,7 @@ public class AdminGUIApp extends GenericGUIApp {
 
         add(new JScrollPane(usersTable), BorderLayout.CENTER);
         add(panel, BorderLayout.SOUTH);
+        loadUsers();
 
     }
 
@@ -121,6 +129,11 @@ public class AdminGUIApp extends GenericGUIApp {
             JOptionPane.showMessageDialog(this, "User cannot be deleted because he/she has tasks assigned!", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+    }
+
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(emailRegex);
     }
 
     public static void main(String[] args) {

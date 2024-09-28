@@ -46,7 +46,7 @@ public class ManagerGUIApp extends GenericGUIApp {
         titleField = new JTextField();
         inputPanel.add(titleField);
 
-        inputPanel.add(new JLabel(" Due Date:"));
+        inputPanel.add(new JLabel(" Due Date (YYYY-MM-DD):"));
         dueDateField = new JTextField();
         inputPanel.add(dueDateField);
 
@@ -121,6 +121,16 @@ public class ManagerGUIApp extends GenericGUIApp {
         String dueDate = dueDateField.getText();
         String email = emailComboBox.getItemAt(emailComboBox.getSelectedIndex());
 
+        if (title.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Missing taks title!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!isValidDate(dueDate)) {
+            JOptionPane.showMessageDialog(this, "Date must be in the format YYYY-MM-DD!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try (PreparedStatement pstmt = connection.prepareStatement("INSERT INTO tasks (title, due_date, status, user_email) VALUES (?, ?, 0, ?)")) {
 
             pstmt.setString(1, title);
@@ -149,6 +159,9 @@ public class ManagerGUIApp extends GenericGUIApp {
                 e.printStackTrace();
             }
         }
+        else {
+            JOptionPane.showMessageDialog(ManagerGUIApp.this, "Select a task to remove!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void updateTask() {
@@ -174,6 +187,13 @@ public class ManagerGUIApp extends GenericGUIApp {
                 e.printStackTrace();
             }
         }
+        else {
+            JOptionPane.showMessageDialog(ManagerGUIApp.this, "Select a task to update!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private boolean isValidDate(String dateStr) {
+        return dateStr.matches("\\d{4}-\\d{2}-\\d{2}");
     }
 
     public static void main(String[] args) {
