@@ -64,7 +64,7 @@ public class UserGUIApp extends GenericGUIApp {
 
         tableModel.setRowCount(0); // Clear existing rows
 
-        try (PreparedStatement stmt = connection.prepareStatement("SELECT id, title, due_date, status FROM tasks WHERE user_email = ?")) {
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT id, title, due_date, status FROM tasks WHERE user_email = ? ORDER BY due_date ASC")) {
             stmt.setString(1, selectedEmail);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

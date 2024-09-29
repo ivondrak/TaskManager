@@ -95,7 +95,7 @@ public class AdminGUIApp extends GenericGUIApp {
     private void loadUsers() {
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT name, email FROM users")) {
+             ResultSet rs = stmt.executeQuery("SELECT * FROM users ORDER BY name ASC")) {
             while (rs.next()) {
                 String name = rs.getString("name");
                 String email = rs.getString("email");

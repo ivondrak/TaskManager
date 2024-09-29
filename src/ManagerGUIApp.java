@@ -103,7 +103,7 @@ public class ManagerGUIApp extends GenericGUIApp {
     private void loadTasks() {
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT tasks.id, tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email")) {
+                ResultSet rs = stmt.executeQuery("SELECT tasks.id, tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email ORDER BY tasks.due_date ASC")) {
 
             while (rs.next()) {
                 String status = rs.getInt("status") == 0 ? "Pending" : "Completed";
