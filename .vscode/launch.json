@@ -8,6 +8,7 @@
             "request": "launch",
             "mainClass": "AdminGUIApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         },
@@ -17,6 +18,7 @@
             "request": "launch",
             "mainClass": "PersonalGUIApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         },
@@ -26,6 +28,7 @@
             "request": "launch",
             "mainClass": "ManagerGUIApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         },
@@ -35,6 +38,7 @@
             "request": "launch",
             "mainClass": "UserGUIApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         },
@@ -44,6 +48,7 @@
             "request": "launch",
             "mainClass": "AdminApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         },
@@ -53,6 +58,7 @@
             "request": "launch",
             "mainClass": "ManagerApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         },
@@ -62,6 +68,7 @@
             "request": "launch",
             "mainClass": "UserApp",
             "classpath": [
+                "bin",
                 "lib/mysql-connector-j-9.0.0.jar"
             ]
         }

@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.TableRowSorter;
 
 public class AdminGUIApp extends GenericGUIApp {
 
@@ -25,14 +26,16 @@ public class AdminGUIApp extends GenericGUIApp {
         setLayout(new BorderLayout());
         tableModel = new DefaultTableModel(new String[]{"Name", "Email"}, 0);
         usersTable = new JTable(tableModel);
+        usersTable.setRowSorter(new TableRowSorter<>(tableModel));
 
         usersTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRow = usersTable.getSelectedRow();
                 if (selectedRow != -1) {
-                    String name = (String) tableModel.getValueAt(selectedRow, 0);
-                    String email = (String) tableModel.getValueAt(selectedRow, 1);
+                    int modelRow = usersTable.convertRowIndexToModel(selectedRow);
+                    String name = (String) tableModel.getValueAt(modelRow, 0);
+                    String email = (String) tableModel.getValueAt(modelRow, 1);
                     nameField.setText(name);
                     emailField.setText(email);
                 }
@@ -66,7 +69,8 @@ public class AdminGUIApp extends GenericGUIApp {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = usersTable.getSelectedRow();
                 if (selectedRow != -1) {
-                    String email = (String) tableModel.getValueAt(selectedRow, 1);
+                    int modelRow = usersTable.convertRowIndexToModel(selectedRow);
+                    String email = (String) tableModel.getValueAt(modelRow, 1);
                     removeUser(email);
                     loadUsers();
                 }
@@ -95,7 +99,7 @@ public class AdminGUIApp extends GenericGUIApp {
     private void loadUsers() {
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT * FROM users ORDER BY name ASC")) {
+             ResultSet rs = stmt.executeQuery("SELECT name, email FROM users")) {
             while (rs.next()) {
                 String name = rs.getString("name");
                 String email = rs.getString("email");

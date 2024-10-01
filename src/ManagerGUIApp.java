@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.TableRowSorter;
 
 public class ManagerGUIApp extends GenericGUIApp {
 
@@ -17,6 +18,7 @@ public class ManagerGUIApp extends GenericGUIApp {
 
     public ManagerGUIApp(String title) {
         super(title);
+        setSize(800, 600);
     }
 
     @Override
@@ -25,15 +27,18 @@ public class ManagerGUIApp extends GenericGUIApp {
 
         tableModel = new DefaultTableModel(new String[]{"ID", "Title", "Due Date", "Status", "User Email"}, 0);
         table = new JTable(tableModel);
+        table.setRowSorter(new TableRowSorter<>(tableModel));
+
         add(new JScrollPane(table), BorderLayout.CENTER);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    String title = (String) tableModel.getValueAt(selectedRow, 1);
-                    String due_date = (String) tableModel.getValueAt(selectedRow, 2).toString();
-                    String email = (String) tableModel.getValueAt(selectedRow, 4);
+                    int modelRow = table.convertRowIndexToModel(selectedRow);
+                    String title = (String) tableModel.getValueAt(modelRow, 1);
+                    String due_date = (String) tableModel.getValueAt(modelRow, 2).toString();
+                    String email = (String) tableModel.getValueAt(modelRow, 4);
                     titleField.setText(title);
                     dueDateField.setText(due_date);
                     emailComboBox.setSelectedItem(email);
@@ -103,7 +108,7 @@ public class ManagerGUIApp extends GenericGUIApp {
     private void loadTasks() {
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT tasks.id, tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email ORDER BY tasks.due_date ASC")) {
+                ResultSet rs = stmt.executeQuery("SELECT tasks.id, tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email")) {
 
             while (rs.next()) {
                 String status = rs.getInt("status") == 0 ? "Pending" : "Completed";
@@ -149,7 +154,8 @@ public class ManagerGUIApp extends GenericGUIApp {
     private void deleteTask() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
-            int id = (int) tableModel.getValueAt(selectedRow, 0);
+            int modelRow = table.convertRowIndexToModel(selectedRow);
+            int id = (int) tableModel.getValueAt(modelRow, 0);
             try (PreparedStatement pstmt = connection.prepareStatement("DELETE FROM tasks WHERE id = ?")) {
                 pstmt.setInt(1, id);
                 pstmt.executeUpdate();
@@ -168,7 +174,8 @@ public class ManagerGUIApp extends GenericGUIApp {
         
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
-            int id = (int) tableModel.getValueAt(selectedRow, 0);
+            int modelRow = table.convertRowIndexToModel(selectedRow);
+            int id = (int) tableModel.getValueAt(modelRow, 0);
 
             String newTitle = titleField.getText();
             Date newDueDate = Date.valueOf(dueDateField.getText());

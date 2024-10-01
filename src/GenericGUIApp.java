@@ -6,12 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public abstract class GenericGUIApp extends JFrame {
-    //protected final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
-    protected final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
-    //protected final String DB_USER = "root";
-    protected final String DB_USER = "guest";
-    //protected final String DB_PASSWORD = "MajSQL-0293";
-    protected final String DB_PASSWORD = "guest_password";
+    protected final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
+    //protected final String DB_URL = "jdbc:mysql://vsrvfeia0h-64.vsb.cz:3306/user_tasks_db";
+    protected final String DB_USER = "root";
+    //protected final String DB_USER = "guest";
+    protected final String DB_PASSWORD = "MajSQL-0293";
+    //protected final String DB_PASSWORD = "guest_password";
 
     protected Connection connection; 
 

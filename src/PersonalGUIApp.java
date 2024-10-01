@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.TableRowSorter;
 
 public class PersonalGUIApp extends GenericGUIApp {
 
@@ -47,6 +48,8 @@ public class PersonalGUIApp extends GenericGUIApp {
 
         tableModel = new DefaultTableModel(new String[]{"ID", "Title", "Due Date", "Status"}, 0);
         tasksTable = new JTable(tableModel);
+        tasksTable.setRowSorter(new TableRowSorter<>(tableModel));
+
         JScrollPane scrollPane = new JScrollPane(tasksTable);
 
         JButton toggleStatusButton = new JButton("Toggle Status");
@@ -94,7 +97,7 @@ public class PersonalGUIApp extends GenericGUIApp {
 
         tableModel.setRowCount(0); // Clear existing rows
 
-        try (PreparedStatement stmt = connection.prepareStatement("SELECT id, title, due_date, status FROM tasks WHERE user_email = ? ORDER BY due_date ASC")) {
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT id, title, due_date, status FROM tasks WHERE user_email = ?")) {
             stmt.setString(1, selectedEmail);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -121,8 +124,9 @@ public class PersonalGUIApp extends GenericGUIApp {
             return;
         };
 
-        int taskId = (int) tableModel.getValueAt(selectedRow, 0);
-        String currentStatus = (String) tableModel.getValueAt(selectedRow, 3);
+        int modelRow = tasksTable.convertRowIndexToModel(selectedRow);
+        int taskId = (int) tableModel.getValueAt(modelRow, 0);
+        String currentStatus = (String) tableModel.getValueAt(modelRow, 3);
 
         //int newStatus = currentStatus == 0 ? 1 : 0;
         int newStatus = currentStatus.equals("Pending") ? 1 : 0;
@@ -132,7 +136,7 @@ public class PersonalGUIApp extends GenericGUIApp {
             stmt.setInt(2, taskId);
             stmt.executeUpdate();
             currentStatus = newStatus == 0 ? "Pending" : "Completed";
-            tableModel.setValueAt(currentStatus, selectedRow, 3); // Update table model
+            tableModel.setValueAt(currentStatus, modelRow, 3); // Update table model
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
