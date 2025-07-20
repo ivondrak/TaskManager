@@ -12,6 +12,7 @@ public class PersonalGUIApp extends GenericGUIApp {
     private JTextField emailField;
     private JTable tasksTable;
     private DefaultTableModel tableModel;
+    private Timer autoRefreshTimer;
 
     public PersonalGUIApp(String title) {
         super(title);
@@ -67,11 +68,35 @@ public class PersonalGUIApp extends GenericGUIApp {
             }
         });
 
+        JButton reloadButton = new JButton("Reload");
+        reloadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTasks();
+            }
+        });
+
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        buttonPanel.add(toggleStatusButton);
+        buttonPanel.add(reloadButton);
+
         panel.add(inputPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
-        panel.add(toggleStatusButton, BorderLayout.SOUTH);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(panel);
+        
+        // Automatické obnovování každých 5 sekund
+        autoRefreshTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Pouze pokud je zadán email
+                if (!emailField.getText().trim().isEmpty()) {
+                    loadTasks();
+                }
+            }
+        });
+        autoRefreshTimer.start();
     }
 
     private boolean isEmailRegistered(String email) {
@@ -95,6 +120,14 @@ public class PersonalGUIApp extends GenericGUIApp {
     private void loadTasks() {
         String selectedEmail = emailField.getText();
 
+        // Zapamatuj si aktuální výběr
+        int selectedRow = tasksTable.getSelectedRow();
+        Integer selectedId = null;
+        if (selectedRow >= 0) {
+            int modelRow = tasksTable.convertRowIndexToModel(selectedRow);
+            selectedId = (Integer) tableModel.getValueAt(modelRow, 0);
+        }
+
         tableModel.setRowCount(0); // Clear existing rows
 
         try (PreparedStatement stmt = connection.prepareStatement("SELECT id, title, due_date, status FROM tasks WHERE user_email = ?")) {
@@ -114,6 +147,17 @@ public class PersonalGUIApp extends GenericGUIApp {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        // Obnov výběr pokud existoval
+        if (selectedId != null) {
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                if (selectedId.equals(tableModel.getValueAt(i, 0))) {
+                    int viewRow = tasksTable.convertRowIndexToView(i);
+                    tasksTable.setRowSelectionInterval(viewRow, viewRow);
+                    break;
+                }
+            }
         }
     }
 
@@ -146,6 +190,14 @@ public class PersonalGUIApp extends GenericGUIApp {
     private boolean isValidEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
+    }
+
+    @Override
+    public void dispose() {
+        if (autoRefreshTimer != null) {
+            autoRefreshTimer.stop();
+        }
+        super.dispose();
     }
 
     public static void main(String[] args) {

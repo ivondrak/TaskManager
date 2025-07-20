@@ -14,7 +14,8 @@ public class ManagerGUIApp extends GenericGUIApp {
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField titleField, dueDateField;
-    private JButton addButton, deleteButton, updateButton;
+    private JButton addButton, deleteButton, updateButton, reloadButton;
+    private Timer autoRefreshTimer;
 
     public ManagerGUIApp(String title) {
         super(title);
@@ -59,14 +60,16 @@ public class ManagerGUIApp extends GenericGUIApp {
         emailComboBox = new JComboBox<>();
         inputPanel.add(emailComboBox);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
         addButton = new JButton("Add Task");
         deleteButton = new JButton("Delete Task");
         updateButton = new JButton("Update Task");
+        reloadButton = new JButton("Reload");
 
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(updateButton);
+        buttonPanel.add(reloadButton);
         inputPanel.add(buttonPanel);
 
         add(inputPanel, BorderLayout.SOUTH);
@@ -92,6 +95,13 @@ public class ManagerGUIApp extends GenericGUIApp {
             }
         }); 
 
+        reloadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTasks();
+            }
+        }); 
+
         try (Statement stmt = connection.createStatement(); 
                 ResultSet rs = stmt.executeQuery("SELECT email FROM users")) {
             while (rs.next()) {
@@ -103,9 +113,26 @@ public class ManagerGUIApp extends GenericGUIApp {
             e.printStackTrace();
         }
         loadTasks();
+        
+        // Automatické obnovování každých 5 sekund
+        autoRefreshTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTasks();
+            }
+        });
+        autoRefreshTimer.start();
     }
 
     private void loadTasks() {
+        // Zapamatuj si aktuální výběr
+        int selectedRow = table.getSelectedRow();
+        Integer selectedId = null;
+        if (selectedRow >= 0) {
+            int modelRow = table.convertRowIndexToModel(selectedRow);
+            selectedId = (Integer) tableModel.getValueAt(modelRow, 0);
+        }
+
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT tasks.id, tasks.title, tasks.due_date, tasks.status, users.email FROM tasks JOIN users ON tasks.user_email = users.email")) {
@@ -118,6 +145,17 @@ public class ManagerGUIApp extends GenericGUIApp {
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        // Obnov výběr pokud existoval
+        if (selectedId != null) {
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                if (selectedId.equals(tableModel.getValueAt(i, 0))) {
+                    int viewRow = table.convertRowIndexToView(i);
+                    table.setRowSelectionInterval(viewRow, viewRow);
+                    break;
+                }
+            }
         }
     }
 
@@ -201,6 +239,14 @@ public class ManagerGUIApp extends GenericGUIApp {
 
     private boolean isValidDate(String dateStr) {
         return dateStr.matches("\\d{4}-\\d{2}-\\d{2}");
+    }
+
+    @Override
+    public void dispose() {
+        if (autoRefreshTimer != null) {
+            autoRefreshTimer.stop();
+        }
+        super.dispose();
     }
 
     public static void main(String[] args) {

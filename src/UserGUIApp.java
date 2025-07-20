@@ -11,7 +11,8 @@ public class UserGUIApp extends GenericGUIApp {
     private JComboBox<String> emailComboBox;
     private JTable tasksTable;
     private DefaultTableModel tableModel;
-    private JButton toggleStatusButton;
+    private JButton toggleStatusButton, reloadButton;
+    private Timer autoRefreshTimer;
 
     public UserGUIApp(String title) {
         super(title);
@@ -41,10 +42,32 @@ public class UserGUIApp extends GenericGUIApp {
             }
         });
 
+        reloadButton = new JButton("Reload");
+        reloadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTasksForSelectedEmail();
+            }
+        });
+
         add(emailComboBox, BorderLayout.NORTH);
         add(new JScrollPane(tasksTable), BorderLayout.CENTER);
-        add(toggleStatusButton, BorderLayout.SOUTH);
-        loadEmails();     
+        
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        buttonPanel.add(toggleStatusButton);
+        buttonPanel.add(reloadButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+        
+        loadEmails();
+        
+        // Automatické obnovování každých 5 sekund
+        autoRefreshTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadTasksForSelectedEmail();
+            }
+        });
+        autoRefreshTimer.start();     
     }
 
     private void loadEmails() {
@@ -63,6 +86,14 @@ public class UserGUIApp extends GenericGUIApp {
     private void loadTasksForSelectedEmail() {
         String selectedEmail = (String) emailComboBox.getSelectedItem();
         if (selectedEmail == null) return;
+
+        // Zapamatuj si aktuální výběr
+        int selectedRow = tasksTable.getSelectedRow();
+        Integer selectedId = null;
+        if (selectedRow >= 0) {
+            int modelRow = tasksTable.convertRowIndexToModel(selectedRow);
+            selectedId = (Integer) tableModel.getValueAt(modelRow, 0);
+        }
 
         tableModel.setRowCount(0); // Clear existing rows
 
@@ -83,6 +114,17 @@ public class UserGUIApp extends GenericGUIApp {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        // Obnov výběr pokud existoval
+        if (selectedId != null) {
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                if (selectedId.equals(tableModel.getValueAt(i, 0))) {
+                    int viewRow = tasksTable.convertRowIndexToView(i);
+                    tasksTable.setRowSelectionInterval(viewRow, viewRow);
+                    break;
+                }
+            }
         }
     }
 
@@ -110,6 +152,14 @@ public class UserGUIApp extends GenericGUIApp {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void dispose() {
+        if (autoRefreshTimer != null) {
+            autoRefreshTimer.stop();
+        }
+        super.dispose();
     }
 
     public static void main(String[] args) {
