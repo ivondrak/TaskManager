@@ -1,7 +1,12 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "java",
+            "name": "Simple App",
+            "request": "launch",
+            "mainClass": "SimpleApp"
+        },
         {
             "type": "java",
             "name": "Launch Admin Window",
