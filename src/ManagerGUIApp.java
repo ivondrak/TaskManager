@@ -121,17 +121,19 @@ public class ManagerGUIApp extends GenericGUIApp {
                 loadTasks();
             }
         });
-        autoRefreshTimer.start();
+        //autoRefreshTimer.start();
     }
 
     private void loadTasks() {
         // Zapamatuj si aktuální výběr
+        /* 
         int selectedRow = table.getSelectedRow();
         Integer selectedId = null;
         if (selectedRow >= 0) {
             int modelRow = table.convertRowIndexToModel(selectedRow);
             selectedId = (Integer) tableModel.getValueAt(modelRow, 0);
         }
+        */
 
         tableModel.setRowCount(0); // Clear existing rows
         try (Statement stmt = connection.createStatement();
@@ -147,7 +149,16 @@ public class ManagerGUIApp extends GenericGUIApp {
             e.printStackTrace();
         }
 
+        // Zruš výběr řádku
+        table.clearSelection();
+
+        // Vymaž obsah všech polí
+        titleField.setText("");
+        dueDateField.setText("");
+        emailComboBox.setSelectedIndex(0);
+
         // Obnov výběr pokud existoval
+        /* 
         if (selectedId != null) {
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 if (selectedId.equals(tableModel.getValueAt(i, 0))) {
@@ -157,6 +168,7 @@ public class ManagerGUIApp extends GenericGUIApp {
                 }
             }
         }
+        */
     }
 
     private void addTask() {
