@@ -12,9 +12,9 @@
             "name": "Launch Admin Window",
             "request": "launch",
             "mainClass": "AdminGUIApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         },
         {
@@ -22,9 +22,9 @@
             "name": "Launch Personal Window",
             "request": "launch",
             "mainClass": "PersonalGUIApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         },
         {
@@ -32,9 +32,9 @@
             "name": "Launch Manager Window",
             "request": "launch",
             "mainClass": "ManagerGUIApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         },
         {
@@ -42,9 +42,9 @@
             "name": "Launch User Window",
             "request": "launch",
             "mainClass": "UserGUIApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         },
         {
@@ -52,9 +52,9 @@
             "name": "Launch Admin",
             "request": "launch",
             "mainClass": "AdminApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         },
         {
@@ -62,9 +62,9 @@
             "name": "Launch Manager",
             "request": "launch",
             "mainClass": "ManagerApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         },
         {
@@ -72,9 +72,9 @@
             "name": "Launch User",
             "request": "launch",
             "mainClass": "UserApp",
-            "classpath": [
-                "bin",
-                "lib/mysql-connector-j-9.0.0.jar"
+            "classPaths": [
+                "$Auto",
+                "${workspaceFolder}/lib/mysql-connector-j-9.0.0-bin.jar"
             ]
         }
     ]

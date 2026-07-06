@@ -10,6 +10,12 @@
                 "bin",
                 "src/*.java"
             ],
+            "options": {
+                "env": {
+                    "JAVA_HOME": "/Users/ivo/.jdk/jdk-25/Contents/Home",
+                    "PATH": "/Users/ivo/.jdk/jdk-25/Contents/Home/bin:${env:PATH}"
+                }
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true

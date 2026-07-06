@@ -2,6 +2,15 @@
     "java.project.sourcePaths": ["src"],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ]
+        "lib/mysql-connector-j-9.0.0-bin.jar"
+    ],
+    "java.jdt.ls.java.home": "/Users/ivo/.jdk/jdk-25/Contents/Home",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-25",
+            "path": "/Users/ivo/.jdk/jdk-25/Contents/Home",
+            "default": true
+        }
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }

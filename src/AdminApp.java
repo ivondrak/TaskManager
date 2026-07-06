@@ -9,9 +9,14 @@ import java.util.Scanner;
 
 
 public class AdminApp {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
+    //private static final String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
+    private static Ivofinal String DB_URL = "jdbc:mysql://localhost:3306/user_tasks_db";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "MajSQL-0293";
+
+    private static void ensureDriverLoaded() throws ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+    }
 
     public static void main(String[] args) throws Exception {
         List<User> users = loadUsers();
@@ -33,6 +38,7 @@ public class AdminApp {
 
     private static List<User> loadUsers() throws Exception {
         List<User> users = new ArrayList<>();
+        ensureDriverLoaded();
         Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT name, email FROM users");
@@ -51,6 +57,7 @@ public class AdminApp {
     }
 
     private static void addUser(User user) throws Exception {
+        ensureDriverLoaded();
         Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         String query = "INSERT INTO users (name, email) VALUES (?, ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
